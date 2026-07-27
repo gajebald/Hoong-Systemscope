@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Hoong-systemScope.ViewModels</AssemblyName>
+    <RootNamespace>HoongSystemScope.ViewModels</RootNamespace>
+    <Description>Presentation logic for the desktop front end. Deliberately free of any UI framework reference so it can be unit tested without one.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hoong-systemScope.Core\Hoong-systemScope.Core.csproj" />
+    <ProjectReference Include="..\Hoong-systemScope.Analysis\Hoong-systemScope.Analysis.csproj" />
+    <ProjectReference Include="..\Hoong-systemScope.Export\Hoong-systemScope.Export.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoong-systemScope.ViewModels.Tests" />
+  </ItemGroup>
+
+</Project>

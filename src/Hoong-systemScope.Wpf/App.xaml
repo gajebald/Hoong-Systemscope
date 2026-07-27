@@ -1,0 +1,15 @@
+<Application x:Class="HoongSystemScope.Wpf.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:HoongSystemScope.Wpf">
+  <Application.Resources>
+    <local:RiskLevelBrushConverter x:Key="RiskBrush" />
+    <local:BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <local:NullToVisibilityConverter x:Key="NullToVisibility" />
+
+    <Style TargetType="TextBlock" x:Key="SectionHeading">
+      <Setter Property="FontWeight" Value="SemiBold" />
+      <Setter Property="Margin" Value="0,10,0,4" />
+    </Style>
+  </Application.Resources>
+</Application>

@@ -103,6 +103,9 @@ public sealed class ReadOnlyGuaranteeTests
         "Hoong-systemScope.Analysis",
         "Hoong-systemScope.Export",
         "Hoong-systemScope.Windows",
+        "Hoong-systemScope.ViewModels",
+        "Hoong-systemScope.App",
+        "Hoong-systemScope.Wpf",
         "Hoong-systemScope.Cli",
     ];
 
@@ -116,6 +119,7 @@ public sealed class ReadOnlyGuaranteeTests
         "Hoong-systemScope.Collectors",
         "Hoong-systemScope.Analysis",
         "Hoong-systemScope.Windows",
+        "Hoong-systemScope.App",
     ];
 
     [Theory]

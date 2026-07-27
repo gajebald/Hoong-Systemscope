@@ -2,6 +2,7 @@ using System.CommandLine;
 using System.Globalization;
 using System.Runtime.Versioning;
 using HoongSystemScope.Analysis;
+using HoongSystemScope.App;
 using HoongSystemScope.Cli;
 using HoongSystemScope.Core.Models;
 using HoongSystemScope.Export;

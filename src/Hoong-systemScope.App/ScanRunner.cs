@@ -8,7 +8,7 @@ using HoongSystemScope.Core.Models;
 using HoongSystemScope.Export;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace HoongSystemScope.Cli;
+namespace HoongSystemScope.App;
 
 /// <summary>
 /// Ties the collectors, the risk engine and the exporters together for one

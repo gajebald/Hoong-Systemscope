@@ -1,0 +1,237 @@
+<Window x:Class="HoongSystemScope.Wpf.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:models="clr-namespace:HoongSystemScope.Core.Models;assembly=Hoong-systemScope.Core"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Hoong-systemScope"
+        Height="760" Width="1280"
+        MinHeight="480" MinWidth="900"
+        WindowStartupLocation="CenterScreen">
+
+  <Window.Resources>
+    <ObjectDataProvider x:Key="RiskLevels" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
+      <ObjectDataProvider.MethodParameters>
+        <x:Type TypeName="models:RiskLevel" />
+      </ObjectDataProvider.MethodParameters>
+    </ObjectDataProvider>
+  </Window.Resources>
+
+  <DockPanel>
+
+    <!-- Commands -->
+    <ToolBarTray DockPanel.Dock="Top">
+      <ToolBar>
+        <Button Content="Scan" Command="{Binding ScanCommand}" Padding="12,2" />
+        <Button Content="Cancel" Command="{Binding CancelCommand}" Padding="12,2" />
+        <Separator />
+        <Button Content="Open scan…" Click="OnOpen" Padding="8,2" />
+        <Button Content="Save scan…" Click="OnSave" Padding="8,2" />
+        <Separator />
+        <Button Content="Compare with baseline…" Click="OnCompare" Padding="8,2" />
+        <Button Content="Export report…" Click="OnExport" Padding="8,2" />
+      </ToolBar>
+    </ToolBarTray>
+
+    <!-- Status -->
+    <StatusBar DockPanel.Dock="Bottom">
+      <StatusBarItem>
+        <TextBlock Text="{Binding StatusMessage}" />
+      </StatusBarItem>
+      <StatusBarItem HorizontalAlignment="Right">
+        <StackPanel Orientation="Horizontal">
+          <TextBlock Text="Showing " />
+          <TextBlock Text="{Binding VisibleCount}" />
+          <TextBlock Text=" of " />
+          <TextBlock Text="{Binding TotalCount}" />
+          <TextBlock Text=" entries" />
+        </StackPanel>
+      </StatusBarItem>
+    </StatusBar>
+
+    <!-- Progress, only while a scan runs -->
+    <Border DockPanel.Dock="Top"
+            Padding="8,4"
+            Background="#F3F3F3"
+            Visibility="{Binding IsScanning, Converter={StaticResource BoolToVisibility}}">
+      <DockPanel>
+        <TextBlock DockPanel.Dock="Left" Text="{Binding ProgressCaption}" Margin="0,0,12,0" MinWidth="240" />
+        <ProgressBar Height="14" Minimum="0" Maximum="1" Value="{Binding ProgressFraction, Mode=OneWay}" />
+      </DockPanel>
+    </Border>
+
+    <!--
+      Coverage gaps come before the findings, exactly as in the text report.
+      A reader who does not know the scan was incomplete will read the absence
+      of a finding as evidence there is none.
+    -->
+    <Border DockPanel.Dock="Top"
+            Padding="8,6"
+            Background="#FFF4CE"
+            BorderBrush="#E0C060"
+            BorderThickness="0,0,0,1"
+            Visibility="{Binding IsCoverageLimited, Converter={StaticResource BoolToVisibility}}">
+      <TextBlock TextWrapping="Wrap"
+                 Text="This scan ran without administrative rights. Parts of HKEY_LOCAL_MACHINE, the service database and other users' profiles could not be read, so this report is incomplete." />
+    </Border>
+
+    <!-- Baseline comparison summary -->
+    <Border DockPanel.Dock="Top"
+            Padding="8,6"
+            Background="#E8F0FE"
+            BorderBrush="#A8C0E8"
+            BorderThickness="0,0,0,1"
+            Visibility="{Binding HasDiff, Converter={StaticResource BoolToVisibility}}">
+      <TextBlock>
+        <Run Text="Compared with baseline: " />
+        <Run Text="{Binding DiffCaption, Mode=OneWay}" FontWeight="SemiBold" />
+      </TextBlock>
+    </Border>
+
+    <!-- Filters -->
+    <Border DockPanel.Dock="Top" Padding="8,6" Background="#FAFAFA" BorderBrush="#DDDDDD" BorderThickness="0,0,0,1">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock Text="Search" VerticalAlignment="Center" Margin="0,0,6,0" />
+        <TextBox Width="280"
+                 VerticalAlignment="Center"
+                 Text="{Binding SearchText, UpdateSourceTrigger=PropertyChanged, Delay=200}" />
+
+        <TextBlock Text="Minimum risk" VerticalAlignment="Center" Margin="16,0,6,0" />
+        <ComboBox Width="140"
+                  VerticalAlignment="Center"
+                  ItemsSource="{Binding Source={StaticResource RiskLevels}}"
+                  SelectedItem="{Binding MinimumRiskLevel}" />
+
+        <CheckBox Content="Only missing files"
+                  VerticalAlignment="Center"
+                  Margin="16,0,0,0"
+                  IsChecked="{Binding OnlyMissingFiles}" />
+
+        <CheckBox Content="Only untrusted signatures"
+                  VerticalAlignment="Center"
+                  Margin="16,0,0,0"
+                  IsChecked="{Binding OnlyUntrusted}" />
+
+        <Button Content="Clear filter"
+                Margin="16,0,0,0"
+                Padding="8,2"
+                Command="{Binding ClearFilterCommand}" />
+      </StackPanel>
+    </Border>
+
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MinWidth="420" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="440" MinWidth="300" />
+      </Grid.ColumnDefinitions>
+
+      <!-- Findings -->
+      <DataGrid Grid.Column="0"
+                ItemsSource="{Binding Entries}"
+                SelectedItem="{Binding SelectedEntry}"
+                AutoGenerateColumns="False"
+                IsReadOnly="True"
+                CanUserAddRows="False"
+                CanUserDeleteRows="False"
+                SelectionMode="Single"
+                GridLinesVisibility="Horizontal"
+                HeadersVisibility="Column"
+                EnableRowVirtualization="True"
+                VirtualizingPanel.IsVirtualizing="True"
+                VirtualizingPanel.VirtualizationMode="Recycling">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Risk" Binding="{Binding RiskCaption}" Width="110">
+            <DataGridTextColumn.ElementStyle>
+              <Style TargetType="TextBlock">
+                <Setter Property="Foreground" Value="{Binding RiskLevel, Converter={StaticResource RiskBrush}}" />
+                <Setter Property="FontWeight" Value="SemiBold" />
+              </Style>
+            </DataGridTextColumn.ElementStyle>
+          </DataGridTextColumn>
+          <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="170" />
+          <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="200" />
+          <DataGridTextColumn Header="Publisher" Binding="{Binding Publisher}" Width="160" />
+          <DataGridTextColumn Header="Signature" Binding="{Binding SignatureCaption}" Width="130" />
+          <DataGridTextColumn Header="File" Binding="{Binding FilePath}" Width="*" />
+        </DataGrid.Columns>
+      </DataGrid>
+
+      <GridSplitter Grid.Column="1" Width="4" HorizontalAlignment="Stretch" Background="#DDDDDD" />
+
+      <!-- Detail pane -->
+      <ScrollViewer Grid.Column="2" Padding="12,8" VerticalScrollBarVisibility="Auto">
+        <StackPanel Visibility="{Binding SelectedEntry, Converter={StaticResource NullToVisibility}}">
+
+          <TextBlock Text="{Binding SelectedEntry.Name}" FontSize="16" FontWeight="SemiBold" TextWrapping="Wrap" />
+          <TextBlock Text="{Binding SelectedEntry.RiskCaption}"
+                     Foreground="{Binding SelectedEntry.RiskLevel, Converter={StaticResource RiskBrush}}"
+                     FontWeight="SemiBold" />
+
+          <TextBlock Text="Location" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.Location}" TextWrapping="Wrap" />
+
+          <TextBlock Text="File" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.FilePath}" TextWrapping="Wrap" />
+          <TextBlock Text="This file does not exist."
+                     Foreground="#B31D1D"
+                     Visibility="{Binding SelectedEntry.IsFileMissing, Converter={StaticResource BoolToVisibility}}" />
+
+          <TextBlock Text="Command line" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.CommandLine}" TextWrapping="Wrap" FontFamily="Consolas" />
+
+          <TextBlock Text="Publisher" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.Publisher}" TextWrapping="Wrap" />
+
+          <TextBlock Text="Runs as" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.UserName}" TextWrapping="Wrap" />
+
+          <TextBlock Text="Signature" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.SignatureCaption}" TextWrapping="Wrap" />
+
+          <TextBlock Text="SHA-256" Style="{StaticResource SectionHeading}" />
+          <TextBlock Text="{Binding SelectedEntry.Sha256}" TextWrapping="Wrap" FontFamily="Consolas" FontSize="11" />
+
+          <!--
+            The reasons are the point of the whole exercise. A risk level
+            without its justification invites the reader to act on a number
+            nobody can check.
+          -->
+          <TextBlock Text="Why this was rated"
+                     Style="{StaticResource SectionHeading}"
+                     Visibility="{Binding SelectedEntry.HasReasons, Converter={StaticResource BoolToVisibility}}" />
+          <ItemsControl ItemsSource="{Binding SelectedEntry.Reasons}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Margin="0,0,0,8" Padding="8,6" Background="#F5F5F5" CornerRadius="3">
+                  <StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                      <TextBlock Text="{Binding ScoreDelta, StringFormat={}{0:+#;-#;0}}" FontWeight="SemiBold" Margin="0,0,8,0" />
+                      <TextBlock Text="{Binding Title}" TextWrapping="Wrap" />
+                    </StackPanel>
+                    <TextBlock Text="{Binding Detail}"
+                               FontSize="11"
+                               Foreground="#555555"
+                               TextWrapping="Wrap"
+                               Margin="0,3,0,0"
+                               Visibility="{Binding Detail, Converter={StaticResource NullToVisibility}}" />
+                  </StackPanel>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <TextBlock Text="Coverage gaps"
+                     Style="{StaticResource SectionHeading}"
+                     Visibility="{Binding DataContext.IsCoverageLimited, RelativeSource={RelativeSource AncestorType=Window}, Converter={StaticResource BoolToVisibility}}" />
+
+          <Border Margin="0,8,0,0" Padding="8,6" Background="#F0F0F0" CornerRadius="3">
+            <TextBlock TextWrapping="Wrap"
+                       FontSize="11"
+                       Foreground="#555555"
+                       Text="Hoong-systemScope is a diagnostic tool, not an antivirus product. It changes nothing on this machine and cannot tell you that something is malicious." />
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
+    </Grid>
+  </DockPanel>
+</Window>

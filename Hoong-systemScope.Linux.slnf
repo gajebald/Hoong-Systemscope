@@ -1,0 +1,21 @@
+{
+  "solution": {
+    "path": "Hoong-systemScope.sln",
+    "projects": [
+      "src\\Hoong-systemScope.Analysis\\Hoong-systemScope.Analysis.csproj",
+      "src\\Hoong-systemScope.App\\Hoong-systemScope.App.csproj",
+      "src\\Hoong-systemScope.Cli\\Hoong-systemScope.Cli.csproj",
+      "src\\Hoong-systemScope.Collectors\\Hoong-systemScope.Collectors.csproj",
+      "src\\Hoong-systemScope.Core\\Hoong-systemScope.Core.csproj",
+      "src\\Hoong-systemScope.Export\\Hoong-systemScope.Export.csproj",
+      "src\\Hoong-systemScope.ViewModels\\Hoong-systemScope.ViewModels.csproj",
+      "src\\Hoong-systemScope.Windows\\Hoong-systemScope.Windows.csproj",
+      "tests\\Hoong-systemScope.Analysis.Tests\\Hoong-systemScope.Analysis.Tests.csproj",
+      "tests\\Hoong-systemScope.Collectors.Tests\\Hoong-systemScope.Collectors.Tests.csproj",
+      "tests\\Hoong-systemScope.Core.Tests\\Hoong-systemScope.Core.Tests.csproj",
+      "tests\\Hoong-systemScope.Export.Tests\\Hoong-systemScope.Export.Tests.csproj",
+      "tests\\Hoong-systemScope.TestSupport\\Hoong-systemScope.TestSupport.csproj",
+      "tests\\Hoong-systemScope.ViewModels.Tests\\Hoong-systemScope.ViewModels.Tests.csproj"
+    ]
+  }
+}

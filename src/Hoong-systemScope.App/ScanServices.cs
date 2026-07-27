@@ -8,7 +8,7 @@ using HoongSystemScope.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
-namespace HoongSystemScope.Cli;
+namespace HoongSystemScope.App;
 
 /// <summary>
 /// The composition root.
@@ -60,6 +60,10 @@ public static class ScanServices
         services.AddSingleton<ScanOrchestrator>();
         services.AddSingleton(_ => RiskEngine.CreateDefault());
         services.AddSingleton<BaselineComparer>();
+
+        services.AddSingleton<ScanRunner>();
+        services.AddSingleton<HoongSystemScope.ViewModels.IScanService, ScanService>();
+        services.AddSingleton<HoongSystemScope.ViewModels.MainViewModel>();
 
         services.AddSingleton<IReportWriter, JsonReportWriter>();
         services.AddSingleton<IReportWriter, TextReportWriter>();

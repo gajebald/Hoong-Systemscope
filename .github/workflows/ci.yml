@@ -20,8 +20,11 @@ env:
 
 jobs:
   # Linux proves the platform-independent half stands on its own. Core,
-  # Collectors, Analysis and Export target plain net8.0 and speak only to
-  # abstractions, so their whole test suite runs here.
+  # Collectors, Analysis, Export and ViewModels target plain net8.0 and speak
+  # only to abstractions, so their whole test suite runs here.
+  #
+  # It builds through a solution filter rather than the solution: the WPF
+  # project needs the Windows Desktop SDK, which no Linux SDK ships.
   linux:
     name: Build and test (Linux)
     runs-on: ubuntu-latest
@@ -33,16 +36,16 @@ jobs:
           dotnet-version: '8.0.x'
 
       - name: Restore
-        run: dotnet restore Hoong-systemScope.sln
+        run: dotnet restore Hoong-systemScope.Linux.slnf
 
       - name: Build
-        run: dotnet build Hoong-systemScope.sln --configuration Release --no-restore
+        run: dotnet build Hoong-systemScope.Linux.slnf --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test Hoong-systemScope.sln --configuration Release --no-build --verbosity normal
+        run: dotnet test Hoong-systemScope.Linux.slnf --configuration Release --no-build --verbosity normal
 
-  # Windows is where the net8.0-windows projects can actually be exercised and
-  # where the shipping artifact is produced.
+  # Windows is where the net8.0-windows projects, WPF included, can actually be
+  # compiled and where the shipping artifacts are produced.
   windows:
     name: Build, test and publish (Windows)
     runs-on: windows-latest
@@ -62,13 +65,21 @@ jobs:
       - name: Test
         run: dotnet test Hoong-systemScope.sln --configuration Release --no-build --verbosity normal
 
-      - name: Publish
+      - name: Publish the console tool
         run: >
           dotnet publish src/Hoong-systemScope.Cli/Hoong-systemScope.Cli.csproj
           --configuration Release
           --runtime win-x64
           --self-contained false
           --output artifacts/win-x64
+
+      - name: Publish the desktop tool
+        run: >
+          dotnet publish src/Hoong-systemScope.Wpf/Hoong-systemScope.Wpf.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          --output artifacts/win-x64-desktop
 
       # A smoke test that the published binary starts and can enumerate its own
       # collectors. Cheap, and it catches a broken composition root that no
@@ -78,9 +89,11 @@ jobs:
           ./artifacts/win-x64/Hoong-systemScope.exe --version
           ./artifacts/win-x64/Hoong-systemScope.exe list-collectors
 
-      - name: Upload artifact
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: hoong-systemscope-win-x64
-          path: artifacts/win-x64
+          path: |
+            artifacts/win-x64
+            artifacts/win-x64-desktop
           if-no-files-found: error
