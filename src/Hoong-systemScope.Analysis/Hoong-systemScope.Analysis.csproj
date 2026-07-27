@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Hoong-systemScope.Analysis</AssemblyName>
+    <RootNamespace>HoongSystemScope.Analysis</RootNamespace>
+    <Description>Risk scoring rules, risk engine, baseline comparison and summaries.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hoong-systemScope.Core\Hoong-systemScope.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoong-systemScope.Analysis.Tests" />
+  </ItemGroup>
+
+</Project>

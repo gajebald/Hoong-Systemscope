@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Hoong-systemScope.Export</AssemblyName>
+    <RootNamespace>HoongSystemScope.Export</RootNamespace>
+    <Description>JSON, plain text and CSV report writers plus baseline persistence.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hoong-systemScope.Core\Hoong-systemScope.Core.csproj" />
+    <ProjectReference Include="..\Hoong-systemScope.Analysis\Hoong-systemScope.Analysis.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoong-systemScope.Export.Tests" />
+  </ItemGroup>
+
+</Project>

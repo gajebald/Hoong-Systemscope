@@ -1,0 +1,30 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningsAsErrors />
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Deterministic>true</Deterministic>
+    <NeutralLanguage>en</NeutralLanguage>
+
+    <!--
+      Allows the net8.0-windows projects to be compiled on non-Windows build
+      agents. Only the compilation is cross-platform; the produced binaries
+      still require Windows to run.
+    -->
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+
+    <Product>Hoong-systemScope</Product>
+    <Company>Hoong-systemScope</Company>
+    <Authors>Hoong-systemScope contributors</Authors>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Copyright>Hoong-systemScope</Copyright>
+  </PropertyGroup>
+
+</Project>

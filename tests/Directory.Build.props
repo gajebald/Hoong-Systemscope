@@ -1,0 +1,21 @@
+<Project>
+
+  <!--
+    Settings shared by the test projects. The root file is imported explicitly
+    because MSBuild stops at the first Directory.Build.props it finds.
+  -->
+  <Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+
+    <!--
+      CA1707 forbids underscores in member names. Test names use them
+      deliberately: "Parse_prefers_the_shortest_existing_prefix" reads as a
+      sentence in the runner output, which is the whole point.
+    -->
+    <NoWarn>$(NoWarn);CA1707;CA1861;CA5394;CA1305;CA1310</NoWarn>
+  </PropertyGroup>
+
+</Project>

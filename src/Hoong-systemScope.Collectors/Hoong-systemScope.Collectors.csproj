@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>Hoong-systemScope.Collectors</AssemblyName>
+    <RootNamespace>HoongSystemScope.Collectors</RootNamespace>
+    <Description>Scanner modules and scan orchestration. Contains no Windows-specific code; everything runs against the abstractions declared in Hoong-systemScope.Core.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Hoong-systemScope.Core\Hoong-systemScope.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Hoong-systemScope.Collectors.Tests" />
+  </ItemGroup>
+
+</Project>

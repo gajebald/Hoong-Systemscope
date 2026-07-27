@@ -1,0 +1,41 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 4
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{csproj,props,targets,json,yml,yaml}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.cs]
+dotnet_sort_system_directives_first = true
+csharp_using_directive_placement = outside_namespace:warning
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_prefer_braces = true:suggestion
+dotnet_style_readonly_field = true:warning
+dotnet_style_require_accessibility_modifiers = for_non_interface_members:warning
+
+# The public surface is documented where it matters; do not fail the build on
+# every missing XML comment.
+dotnet_diagnostic.CS1591.severity = none
+
+# Analyzer rules that fight the read-only, record-heavy design of this project.
+dotnet_diagnostic.CA1002.severity = none
+dotnet_diagnostic.CA1034.severity = none
+dotnet_diagnostic.CA1062.severity = none
+dotnet_diagnostic.CA1848.severity = none
+dotnet_diagnostic.CA2007.severity = none
+dotnet_diagnostic.CA1303.severity = none
+dotnet_diagnostic.CA1819.severity = none
+
+# CA1720 objects to RegistryValueKind.String and SignatureStatus.Unsigned. Both
+# are the established domain terms (REG_SZ, "unsigned binary"); renaming them to
+# satisfy the analyzer would make the model harder to read, not safer.
+dotnet_diagnostic.CA1720.severity = none
