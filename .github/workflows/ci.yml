@@ -1,8 +1,12 @@
 name: CI
 
 on:
+  # Every branch, not just the default one. Pinning this to "main" meant the
+  # workflow never fired: this repository's default branch is the feature
+  # branch itself, so there was neither a push to main nor a pull request to
+  # match against.
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
   workflow_dispatch:
 

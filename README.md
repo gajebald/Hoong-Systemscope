@@ -169,6 +169,49 @@ nichts.
 
 Mehr dazu in [`docs/architecture.md`](docs/architecture.md).
 
+## Marken und Zugehörigkeit
+
+**Hoong-systemScope ist kein Microsoft-Produkt.** Das Projekt steht in keiner
+Verbindung zur Microsoft Corporation und wird von ihr weder unterstützt noch
+gesponsert, geprüft oder autorisiert.
+
+Genannte Marken gehören ihren jeweiligen Inhabern:
+
+* **Microsoft**, **Windows**, **Windows 10**, **Windows 11**, **.NET**,
+  **Authenticode**, **Visual Studio**, **WPF**, **WinUI**, **PowerShell** und
+  **Microsoft Edge** sind Marken oder eingetragene Marken der Microsoft
+  Corporation.
+* **HijackThis** ist eine Marke der Trend Micro Incorporated beziehungsweise der
+  jeweiligen Rechteinhaber. Hoong-systemScope orientiert sich am Konzept dieses
+  Werkzeugs, übernimmt aber **keinen Quellcode**, keine Datenbestände und keine
+  gestalterischen Elemente daraus.
+* **Google Chrome**, **Mozilla Firefox** und **Brave** sind Marken von Google
+  LLC, der Mozilla Foundation beziehungsweise Brave Software, Inc. Sie werden
+  hier ausschließlich genannt, weil ihre Profilverzeichnisse auf der Sperrliste
+  stehen, die dieses Werkzeug vom Lesen ausschließt.
+
+Alle Nennungen erfolgen rein beschreibend, um anzugeben, mit welchem
+Betriebssystem das Werkzeug arbeitet und welche Systembestandteile es
+untersucht. Sie begründen keine Herkunftsangabe und keine geschäftliche
+Verbindung.
+
+Konkret bedeutet das für dieses Projekt:
+
+* Es werden **keine** Logos, Icons, Schriftzüge oder sonstigen Gestaltungsmittel
+  von Microsoft oder anderen Markeninhabern verwendet oder mitgeliefert.
+* Der Produktname enthält bewusst **keinen** Bestandteil wie „Microsoft",
+  „Windows" oder „.NET", der eine Herkunft aus oder eine Billigung durch diese
+  Unternehmen nahelegen könnte.
+* Die ausgelieferte Binärdatei gibt sich weder in ihren Dateieigenschaften noch
+  in ihrer Ausgabe als Bestandteil von Windows oder als Microsoft-Software aus.
+  `Company` und `Product` sind auf `Hoong-systemScope` gesetzt.
+* Wer das Projekt forkt, umbenennt oder weitervertreibt, muss diese Trennung
+  ebenso wahren.
+
+Die verwendeten NuGet-Pakete (`System.CommandLine`, `Microsoft.Extensions.*`,
+`System.Management`, xUnit, NSubstitute, coverlet) stehen unter ihren eigenen
+Lizenzen und werden nicht verändert.
+
 ## Namensregel
 
 `Hoong-systemScope` enthält einen Bindestrich, der in C#-Bezeichnern nicht
