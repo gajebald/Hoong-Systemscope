@@ -5,7 +5,12 @@
     <AssemblyName>Hoong-systemScope.Windows</AssemblyName>
     <RootNamespace>HoongSystemScope.Windows</RootNamespace>
     <Description>Windows implementations of the Hoong-systemScope abstractions: registry, Authenticode, Task Scheduler, service catalog, processes and shell links.</Description>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <!--
+      Required by the LibraryImport source generator, which emits unsafe
+      marshalling stubs. No hand-written code in this project uses an unsafe
+      block.
+    -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
