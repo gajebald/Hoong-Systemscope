@@ -1,3 +1,4 @@
+using HoongSystemScope.Core.Models;
 using HoongSystemScope.Collectors.Modules;
 using HoongSystemScope.Core.Abstractions;
 

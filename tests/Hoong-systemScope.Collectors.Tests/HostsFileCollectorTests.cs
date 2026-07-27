@@ -1,3 +1,4 @@
+using HoongSystemScope.Core.Models;
 using HoongSystemScope.Collectors.Modules;
 
 namespace HoongSystemScope.Collectors.Tests;

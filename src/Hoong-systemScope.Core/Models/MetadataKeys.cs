@@ -1,11 +1,12 @@
-namespace HoongSystemScope.Collectors;
+namespace HoongSystemScope.Core.Models;
 
 /// <summary>
-/// Well-known keys used in <see cref="Core.Models.ScanEntry.Metadata"/>.
+/// Well-known keys used in <see cref="ScanEntry.Metadata"/>.
 /// </summary>
 /// <remarks>
-/// Collectors write them, risk rules and exporters read them. Keeping the
-/// strings in one place stops the two sides from drifting apart silently.
+/// Collectors write them, risk rules and exporters read them. They live in
+/// Core so that all three sides share one definition without Analysis or
+/// Export having to reference the collectors.
 /// </remarks>
 public static class MetadataKeys
 {
