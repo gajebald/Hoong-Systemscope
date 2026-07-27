@@ -36,6 +36,26 @@ Die Durchsetzung sitzt an drei Stellen:
 
 Details in [`docs/safety.md`](docs/safety.md).
 
+## Zwei Oberflächen
+
+Das Werkzeug gibt es als Konsolenanwendung (`Hoong-systemScope.exe`) und als
+Desktop-Anwendung (`Hoong-systemScope.Desktop.exe`). Beide benutzen denselben
+Scanner, dieselben Regeln und dieselbe Kompositionswurzel — die Oberfläche
+tauscht nur aus, wer die Ergebnisse anzeigt.
+
+Die Desktop-Oberfläche zeigt die Funde in einer Tabelle, filtert nach
+Risikostufe, Kategorie, Freitext, fehlenden Dateien und nicht vertrauenswürdigen
+Signaturen, und schreibt im Detailbereich zu jedem Eintrag die
+Bewertungsgründe aus. Baselines lassen sich laden, vergleichen und exportieren.
+
+**Auch die Oberfläche ist schreibgeschützt.** Es gibt keine Schaltfläche zum
+Entfernen, Deaktivieren oder Beenden. Das ist keine Auslassung, sondern
+Konstruktion: der Vertrag, gegen den die Oberfläche arbeitet (`IScanService`),
+kennt ausschließlich Lesen und Rendern. Eine solche Schaltfläche ließe sich
+nicht ergänzen, ohne zuerst diesen Vertrag zu ändern — und ein Test schlägt an,
+wenn ein Mitglied des ViewModels oder des Vertrags so heißt, als würde es das
+System verändern.
+
 ## Verwendung
 
 ```
@@ -143,29 +163,47 @@ dotnet test  Hoong-systemScope.sln -c Release
 dotnet publish src/Hoong-systemScope.Cli -c Release -r win-x64 --self-contained false
 ```
 
-Benötigt das .NET 8 SDK. `Core`, `Collectors`, `Analysis` und `Export` zielen auf
-plattformneutrales `net8.0`; nur `Windows` und `Cli` auf `net8.0-windows`. Alle
-Tests laufen deshalb auf jedem Buildagenten, auch unter Linux.
+Benötigt das .NET 8 SDK. `Core`, `Collectors`, `Analysis`, `Export` und
+`ViewModels` zielen auf plattformneutrales `net8.0`; `Windows`, `App`, `Cli` und
+`Wpf` auf `net8.0-windows`. Alle Tests laufen deshalb auf jedem Buildagenten,
+auch unter Linux.
+
+**Unter Linux** kann das WPF-Projekt nicht gebaut werden — kein Linux-SDK liefert
+die Windows-Desktop-Targets mit. Dafür gibt es einen Solution-Filter, der es
+auslässt:
+
+```bash
+dotnet build Hoong-systemScope.Linux.slnf -c Release
+dotnet test  Hoong-systemScope.Linux.slnf -c Release
+```
 
 ## Architektur
 
 ```
                        Core (net8.0)
              Modelle · Enums · Abstraktionen
-              ↑        ↑        ↑        ↑
-    Collectors    Analysis   Export   Windows (net8.0-windows)
-     (net8.0)     (net8.0)  (net8.0)      │
-          ↑            ↑        ↑         │
-          └────────────┴────────┴─────────┴── Cli (net8.0-windows)
+        ↑         ↑        ↑        ↑         ↑
+ Collectors  Analysis  Export  ViewModels  Windows (net8.0-windows)
+  (net8.0)   (net8.0) (net8.0)  (net8.0)      │
+        └─────────┴────────┴────────┬─────────┘
+                                    │
+                          App (net8.0-windows)
+                     Kompositionswurzel · ScanRunner
+                              ↑          ↑
+                    Cli (Konsole)   Wpf (Desktop)
 ```
 
 Der entscheidende Schnitt: **die Collectors enthalten die Scan-Logik, aber
 keinen Windows-Code.** Sie sprechen ausschließlich `Core`-Abstraktionen an.
 `Hoong-systemScope.Windows` liefert die echten Implementierungen, Tests liefern
 In-Memory-Fakes. Das macht die gesamte Sammel- und Bewertungslogik
-plattformunabhängig testbar — und es ist die Naht, an der eine spätere WPF- oder
-WinUI-Oberfläche andockt: sie ersetzt `Cli` als Kompositionswurzel und sonst
-nichts.
+plattformunabhängig testbar.
+
+Derselbe Schnitt trägt die Oberfläche: `ViewModels` enthält die komplette
+Darstellungslogik ohne jede UI-Framework-Referenz und arbeitet gegen
+`IScanService`. Deshalb sind Scannen, Filtern, Auswählen, Vergleichen und
+Exportieren durch Tests abgedeckt, die auf jedem Agenten laufen — das
+WPF-Projekt ist nur XAML und Dateidialoge.
 
 Mehr dazu in [`docs/architecture.md`](docs/architecture.md).
 

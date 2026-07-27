@@ -35,8 +35,22 @@ auslöst.
 * Registryänderung: `SetValue(`, `DeleteValue`, `DeleteSubKey`, `CreateSubKey`, `RegSetValue`, `RegCreateKey`, `RegDeleteKey`, `RegDeleteValue`
 * Prozess- und Dienststeuerung: `.Kill(`, `ServiceController`
 
-`Export` und `Cli` sind von der Datei-Gruppe ausgenommen, weil sie den Bericht
-schreiben — aber ausschließlich dorthin, wohin der Benutzer sie geschickt hat.
+`Export`, `ViewModels`, `Cli` und `Wpf` sind von der Datei-Gruppe ausgenommen,
+weil sie den Bericht schreiben — aber ausschließlich dorthin, wohin der Benutzer
+sie geschickt hat.
+
+## 2a. Die Oberfläche kann nichts verändern
+
+`IScanService`, der einzige Vertrag, gegen den die Desktop-Oberfläche arbeitet,
+kennt fünf Operationen: scannen, zweimal rendern, laden, speichern. Es gibt
+keine Methode zum Entfernen, Deaktivieren, Beenden oder in Quarantäne
+Verschieben.
+
+Eine entsprechende Schaltfläche ließe sich also nicht ergänzen, ohne zuerst
+diesen Vertrag zu erweitern — was auffällt. Zusätzlich prüft ein Test in
+`ViewModels.Tests`, dass kein Mitglied des `MainViewModel` oder des Vertrags
+nach `delete`, `remove`, `disable`, `kill`, `terminate`, `quarantine`, `fix`
+oder `repair` benannt ist.
 
 **Grenze der Prüfung.** Sie ist lexikalisch. Reflection, `Delegate`-Umwege oder
 ein anders benannter P/Invoke kämen daran vorbei. Ihr Zweck ist, ein Abrutschen
