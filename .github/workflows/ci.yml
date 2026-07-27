@@ -1,0 +1,82 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+
+jobs:
+  # Linux proves the platform-independent half stands on its own. Core,
+  # Collectors, Analysis and Export target plain net8.0 and speak only to
+  # abstractions, so their whole test suite runs here.
+  linux:
+    name: Build and test (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore Hoong-systemScope.sln
+
+      - name: Build
+        run: dotnet build Hoong-systemScope.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Hoong-systemScope.sln --configuration Release --no-build --verbosity normal
+
+  # Windows is where the net8.0-windows projects can actually be exercised and
+  # where the shipping artifact is produced.
+  windows:
+    name: Build, test and publish (Windows)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Restore
+        run: dotnet restore Hoong-systemScope.sln
+
+      - name: Build
+        run: dotnet build Hoong-systemScope.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test Hoong-systemScope.sln --configuration Release --no-build --verbosity normal
+
+      - name: Publish
+        run: >
+          dotnet publish src/Hoong-systemScope.Cli/Hoong-systemScope.Cli.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained false
+          --output artifacts/win-x64
+
+      # A smoke test that the published binary starts and can enumerate its own
+      # collectors. Cheap, and it catches a broken composition root that no
+      # unit test would.
+      - name: Smoke test the published tool
+        run: |
+          ./artifacts/win-x64/Hoong-systemScope.exe --version
+          ./artifacts/win-x64/Hoong-systemScope.exe list-collectors
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hoong-systemscope-win-x64
+          path: artifacts/win-x64
+          if-no-files-found: error
