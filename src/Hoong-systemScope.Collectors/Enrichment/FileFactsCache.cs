@@ -16,14 +16,18 @@ namespace HoongSystemScope.Collectors.Enrichment;
 /// per service would turn a fifteen second scan into several minutes.
 /// </para>
 /// <para>
-/// The cache stores the in-flight <see cref="Task{TResult}"/> rather than the
-/// finished value, so concurrent collectors asking for the same path await one
-/// computation instead of racing into several.
+/// The cache stores a <see cref="Lazy{T}"/> over the in-flight
+/// <see cref="Task{TResult}"/>, not the task itself.
+/// <see cref="ConcurrentDictionary{TKey,TValue}.GetOrAdd(TKey, Func{TKey,TValue})"/>
+/// may run its factory more than once for the same key under contention — it
+/// only guarantees that one result is stored. Storing the task directly would
+/// therefore still start several hashes for the same file and quietly undo the
+/// deduplication; the lazy makes the factory itself run exactly once.
 /// </para>
 /// </remarks>
 public sealed class FileFactsCache
 {
-    private readonly ConcurrentDictionary<string, Task<FileFacts>> _cache =
+    private readonly ConcurrentDictionary<string, Lazy<Task<FileFacts>>> _cache =
         new(StringComparer.OrdinalIgnoreCase);
 
     private readonly IFileSystemProbe _fileSystem;
@@ -61,7 +65,13 @@ public sealed class FileFactsCache
     {
         ArgumentNullException.ThrowIfNull(path);
 
-        return _cache.GetOrAdd(path, key => InspectAsync(key, cancellationToken));
+        var lazy = _cache.GetOrAdd(
+            path,
+            key => new Lazy<Task<FileFacts>>(
+                () => InspectAsync(key, cancellationToken),
+                LazyThreadSafetyMode.ExecutionAndPublication));
+
+        return lazy.Value;
     }
 
     private async Task<FileFacts> InspectAsync(string path, CancellationToken cancellationToken)
